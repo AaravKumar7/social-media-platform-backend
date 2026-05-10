@@ -1,0 +1,41 @@
+# Virtual environment
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Environment variables
+.env
+
+# Database
+db.sqlite3
+
+# VS Code
+.vscode/
+
+# Migrations cache
+*.log
+
+# Static/media (later)
+media/
+staticfiles/
+
+# macOS
+.DS_Store
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage reports
+.coverage
+htmlcov/
+
+# PyCharm
+.idea/
+
+# Migration cache
+*/migrations/__pycache__/
+
+# OS junk
+Thumbs.db
