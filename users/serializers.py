@@ -18,6 +18,19 @@ class LoginSerializer(serializers.Serializer):
     email=serializers.EmailField()
     password=serializers.CharField(write_only=True)
     def validate(self,attrs):
-        attrs=attrs['email']
-        password=password['password']
-        
+        email=attrs['email']
+        password=attrs['password']
+        user=authenticate(
+            username=email,
+            password=password
+        )
+        if user is None:
+            raise serializers.ValidationError(
+                "Invalid credentials"
+            )
+        refresh=RefreshToken.for_user(user)
+        access=refresh.access_token
+        return {
+            'refresh': str(refresh),
+            'access': str(access)
+        }
