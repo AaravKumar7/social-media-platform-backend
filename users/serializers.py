@@ -34,3 +34,7 @@ class LoginSerializer(serializers.Serializer):
             'refresh': str(refresh),
             'access': str(access)
         }
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=User
+        fields=['email','username']
