@@ -1,14 +1,15 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import PostSerializer
-from .models import Post
-class CreatePostView(APIView):
+from .models import Comment
+from .serializers import CommentSerializer
+
+
+class CreateCommentView(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
-        serializer=PostSerializer(data=request.data)
+        serializer=CommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(
@@ -19,31 +20,33 @@ class CreatePostView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-class ListPostView(APIView):
+
+class ListCommentView(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request):
-        posts=Post.objects.all()
-        serializer=PostSerializer(posts,many=True)
+        comments=Comment.objects.all()
+        serializer=CommentSerializer(comments,many=True)
         return Response(serializer.data)
-class UpdatePostView(APIView):
+
+class UpdateCommentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def put(self, request, id):
         try:
-            post = Post.objects.get(id=id)
-        except Post.DoesNotExist:
+            comment = Comment.objects.get(id=id)
+        except Comment.DoesNotExist:
             return Response(
-                {"error": "Post not found"},
+                {"error": "Comment not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user != post.user:
+        if request.user != comment.user:
             return Response(
                 {"error": "Forbidden"},
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        serializer = PostSerializer(post, data=request.data)
+        serializer = CommentSerializer(comment, data=request.data)
 
         if serializer.is_valid():
             serializer.save()
@@ -56,22 +59,22 @@ class UpdatePostView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-class DeletePostView(APIView):
+class DeleteCommentView(APIView):
     permission_classes=[IsAuthenticated]
     def delete(self, request, id):
         try:
-            post = Post.objects.get(id=id)
-        except Post.DoesNotExist:
+            comment = Comment.objects.get(id=id)
+        except Comment.DoesNotExist:
             return Response(
-                {"error": "Post not found"},
+                {"error": "Comment not found"},
                 status=status.HTTP_404_NOT_FOUND
         )
-        if request.user != post.user:
+        if request.user != comment.user:
             return Response(
                 {"error": "Forbidden"},
                 status=status.HTTP_403_FORBIDDEN
             )
-        post.delete()
+        comment.delete()
         return Response(
             status=status.HTTP_204_NO_CONTENT
         )
