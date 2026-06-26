@@ -35,6 +35,20 @@ class LoginSerializer(serializers.Serializer):
             'access': str(access)
         }
 class ProfileSerializer(serializers.ModelSerializer):
+    followers_count = serializers.SerializerMethodField()
+    following_count = serializers.SerializerMethodField()
+
     class Meta:
-        model=User
-        fields=['email','username']
+        model = User
+        fields = [
+            'email',
+            'username',
+            'followers_count',
+            'following_count'
+        ]
+
+    def get_followers_count(self, obj):
+        return obj.followers.count()
+
+    def get_following_count(self, obj):
+        return obj.following.count()
