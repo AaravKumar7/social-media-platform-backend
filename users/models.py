@@ -36,6 +36,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects=UserManager()
     USERNAME_FIELD='email'
     REQUIRED_FIELDS=['username']
+    following=models.ManyToManyField(
+        'self',
+        symmetrical=False,
+        related_name='followers',
+        blank=True
+    )
     def __str__(self):
         return self.username
     
