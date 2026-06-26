@@ -1,10 +1,10 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import PostSerializer
 from .models import Post
+
 class CreatePostView(APIView):
     permission_classes=[IsAuthenticated]
     def post(self,request):
@@ -19,12 +19,14 @@ class CreatePostView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+        
 class ListPostView(APIView):
     permission_classes=[IsAuthenticated]
     def get(self,request):
         posts=Post.objects.all()
         serializer=PostSerializer(posts,many=True)
         return Response(serializer.data)
+    
 class UpdatePostView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -56,6 +58,7 @@ class UpdatePostView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+        
 class DeletePostView(APIView):
     permission_classes=[IsAuthenticated]
     def delete(self, request, id):
@@ -75,4 +78,36 @@ class DeletePostView(APIView):
         return Response(
             status=status.HTTP_204_NO_CONTENT
         )
-        
+    
+class ToggleLikeView(APIView):
+    permission_classes=[IsAuthenticated]
+    def post(self,request,id):
+        try:
+            post=Post.objects.get(id=id)
+        except Post.DoesNotExist:
+            return Response(
+                {'error':"Post not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        if post.likes.filter(id=request.user.id).exists():
+            post.likes.remove(request.user)
+
+            return Response(
+                {
+                    "liked":False,
+                    "likes_count":post.likes.count(),
+                    "message": "Post unliked"
+                },
+                status=status.HTTP_200_OK
+            )
+
+        post.likes.add(request.user)
+
+        return Response(
+            {
+                "liked":True,
+                "likes_count":post.likes.count(),
+                "message": "Post liked"
+            },
+            status=status.HTTP_200_OK
+        )
