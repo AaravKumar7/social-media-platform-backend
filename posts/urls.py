@@ -5,6 +5,7 @@ from .views import (
     UpdatePostView,
     DeletePostView,
     ToggleLikeView,
+    FeedView,
 )
 
 urlpatterns = [
@@ -13,4 +14,5 @@ urlpatterns = [
     path('<int:id>/', UpdatePostView.as_view(), name='update-post'),
     path('<int:id>/delete/', DeletePostView.as_view(), name='delete-post'),
     path('<int:id>/like/', ToggleLikeView.as_view(), name='toggle-like'),
+    path('feed/', FeedView.as_view(), name='feed')
 ]

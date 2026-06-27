@@ -111,3 +111,22 @@ class ToggleLikeView(APIView):
             },
             status=status.HTTP_200_OK
         )
+
+class FeedView(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self,request):
+        following_ids=request.user.following.values_list(
+            'id',
+            flat=True
+        )
+        posts=Post.objects.filter(
+            user__id__in=following_ids
+        )
+        following_ids=list(following_ids)
+        following_ids.append(request.user.id)
+        posts=Post.objects.filter(
+            user__id__in=following_ids
+        ).order_by('-created_at')
+        serializer=PostSerializer(posts,many=True)
+        return Response(serializer.data)
+    
