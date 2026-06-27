@@ -6,6 +6,7 @@ from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
 from django.contrib.auth import get_user_model
 
 class RegisterView(APIView):
+    
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -18,7 +19,9 @@ class RegisterView(APIView):
             serializer.errors, 
             status=status.HTTP_400_BAD_REQUEST
             )
+        
 class LoginView(APIView):
+    
     def post(self,request):
         serializer=LoginSerializer(data=request.data)
         if serializer.is_valid():
@@ -30,16 +33,20 @@ class LoginView(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
+        
 class ProfileView(APIView):
     permission_classes=[IsAuthenticated]
+    
     def get(self, request):
         user=request.user
         serializer=ProfileSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-User=get_user_model()    
+User=get_user_model()
+
 class ToggleFollowView(APIView):
     permission_classes=[IsAuthenticated]
+    
     def post(self,request,id):
         user=request.user
         serializer=ProfileSerializer(user)

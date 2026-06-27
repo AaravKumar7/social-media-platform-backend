@@ -7,6 +7,7 @@ from .models import Post
 
 class CreatePostView(APIView):
     permission_classes=[IsAuthenticated]
+    
     def post(self,request):
         serializer=PostSerializer(data=request.data)
         if serializer.is_valid():
@@ -22,15 +23,19 @@ class CreatePostView(APIView):
         
 class ListPostView(APIView):
     permission_classes=[IsAuthenticated]
+    
     def get(self,request):
         posts=Post.objects.all()
-        serializer=PostSerializer(posts,many=True)
+        serializer=PostSerializer(
+            posts,
+            many=True
+            )
         return Response(serializer.data)
     
 class UpdatePostView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def put(self, request, id):
+    def put(self,request,id):
         try:
             post = Post.objects.get(id=id)
         except Post.DoesNotExist:
@@ -45,7 +50,10 @@ class UpdatePostView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        serializer = PostSerializer(post, data=request.data)
+        serializer = PostSerializer(
+            post,
+            data=request.data
+            )
 
         if serializer.is_valid():
             serializer.save()
@@ -61,6 +69,7 @@ class UpdatePostView(APIView):
         
 class DeletePostView(APIView):
     permission_classes=[IsAuthenticated]
+    
     def delete(self, request, id):
         try:
             post = Post.objects.get(id=id)
@@ -69,7 +78,7 @@ class DeletePostView(APIView):
                 {"error": "Post not found"},
                 status=status.HTTP_404_NOT_FOUND
         )
-        if request.user != post.user:
+        if request.user!=post.user:
             return Response(
                 {"error": "Forbidden"},
                 status=status.HTTP_403_FORBIDDEN
@@ -81,6 +90,7 @@ class DeletePostView(APIView):
     
 class ToggleLikeView(APIView):
     permission_classes=[IsAuthenticated]
+    
     def post(self,request,id):
         try:
             post=Post.objects.get(id=id)
@@ -114,6 +124,7 @@ class ToggleLikeView(APIView):
 
 class FeedView(APIView):
     permission_classes=[IsAuthenticated]
+    
     def get(self,request):
         following_ids=request.user.following.values_list(
             'id',
@@ -129,4 +140,3 @@ class FeedView(APIView):
         ).order_by('-created_at')
         serializer=PostSerializer(posts,many=True)
         return Response(serializer.data)
-    
