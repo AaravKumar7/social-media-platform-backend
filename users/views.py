@@ -86,3 +86,16 @@ class ToggleFollowView(APIView):
         },
         status=status.HTTP_200_OK
     )
+
+class SearchUserView(APIView):
+    permission_classes=[IsAuthenticated]
+    
+    def get(self,request):
+        query=request.query_params.get('username','')
+        users=User.objects.filter(
+            username__icontains=query
+        )
+        serializer=ProfileSerializer(users,many=True)
+        return Response(
+            serializer.data
+        )
