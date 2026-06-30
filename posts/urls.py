@@ -6,6 +6,7 @@ from .views import (
     DeletePostView,
     ToggleLikeView,
     FeedView,
+    SearchPostView,
 )
 
 urlpatterns = [
@@ -38,5 +39,10 @@ urlpatterns = [
         'feed/',
         FeedView.as_view(),
         name='feed'
-        )
+        ),
+    path(
+        'search/', 
+        SearchPostView.as_view(), 
+        name='search-post'
+        ),
 ]

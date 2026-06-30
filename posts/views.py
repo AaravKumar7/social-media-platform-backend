@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import PostSerializer
 from .models import Post
+from .pagination import PostPagination
 
 class CreatePostView(APIView):
     permission_classes=[IsAuthenticated]
@@ -25,12 +26,11 @@ class ListPostView(APIView):
     permission_classes=[IsAuthenticated]
     
     def get(self,request):
-        posts=Post.objects.all()
-        serializer=PostSerializer(
-            posts,
-            many=True
-            )
-        return Response(serializer.data)
+        posts=Post.objects.all().order_by('-created_at')
+        paginator=PostPagination()
+        page=paginator.paginate_queryset(posts,request)
+        serializer=PostSerializer(page,many=True)
+        return paginator.get_paginated_response(serializer.data)
     
 class UpdatePostView(APIView):
     permission_classes = [IsAuthenticated]
@@ -140,3 +140,16 @@ class FeedView(APIView):
         ).order_by('-created_at')
         serializer=PostSerializer(posts,many=True)
         return Response(serializer.data)
+    
+class SearchPostView(APIView):
+    permission_classes=[IsAuthenticated]
+    
+    def get(self,request):
+        query=request.query_params.get('q','')
+        posts=Post.objects.filter(
+            content__icontains=query
+        )
+        serializer=PostSerializer(posts,many=True)
+        return Response(
+            serializer.data
+        )

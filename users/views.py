@@ -4,6 +4,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
 from django.contrib.auth import get_user_model
+from posts.serializers import PostSerializer
+from posts.models import Post
 
 class RegisterView(APIView):
     

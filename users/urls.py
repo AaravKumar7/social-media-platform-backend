@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView, LoginView, ProfileView, ToggleFollowView
+from .views import RegisterView, LoginView, ProfileView, ToggleFollowView, SearchUserView
 
 urlpatterns = [
     path(
@@ -21,5 +21,10 @@ urlpatterns = [
         'follow/<int:id>/',
         ToggleFollowView.as_view(),
         name='toggle-follow'
+        ),
+    path(
+        'search/', 
+        SearchUserView.as_view(), 
+        name='search-user'
         ),
 ]
