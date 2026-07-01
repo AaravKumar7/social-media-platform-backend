@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from .models import Post
-
+from users.serializers import UserSerializer
 
 class PostSerializer(serializers.ModelSerializer):
+    user=UserSerializer(read_only=True)
     likes_count = serializers.SerializerMethodField()
 
     class Meta:
