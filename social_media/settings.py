@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'posts',
     'comments',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -130,6 +131,29 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Social Media API',
+    'DESCRIPTION': 'Backend API for the Social Media Platform',
+    'VERSION': '1.0.0',
+
+    'COMPONENT_SPLIT_REQUEST': True,
+
+    'SECURITY': [
+        {
+            'BearerAuth': []
+        }
+    ],
+
+    'SECURITY_SCHEMES': {
+        'BearerAuth': {
+            'type': 'http',
+            'scheme': 'bearer',
+            'bearerFormat': 'JWT',
+        }
+    }
 }
 
 MEDIA_URL = '/media/'
