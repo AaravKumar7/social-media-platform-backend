@@ -6,6 +6,7 @@ from .serializers import PostSerializer
 from .models import Post
 from .pagination import PostPagination
 from rest_framework.parsers import MultiPartParser, FormParser
+from .permissions import IsOwner
 
 class CreatePostView(APIView):
     permission_classes=[IsAuthenticated]
@@ -35,7 +36,7 @@ class ListPostView(APIView):
         return paginator.get_paginated_response(serializer.data)
     
 class UpdatePostView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsOwner]
 
     def put(self,request,id):
         try:
@@ -46,11 +47,7 @@ class UpdatePostView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user != post.user:
-            return Response(
-                {"error": "Forbidden"},
-                status=status.HTTP_403_FORBIDDEN
-            )
+        self.check_object_permissions(request,post)
 
         serializer = PostSerializer(
             post,
