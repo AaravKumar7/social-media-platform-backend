@@ -67,7 +67,7 @@ class UpdatePostView(APIView):
         )
         
 class DeletePostView(APIView):
-    permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated,IsOwner]
     
     def delete(self, request, id):
         try:
@@ -77,11 +77,7 @@ class DeletePostView(APIView):
                 {"error": "Post not found"},
                 status=status.HTTP_404_NOT_FOUND
         )
-        if request.user!=post.user:
-            return Response(
-                {"error": "Forbidden"},
-                status=status.HTTP_403_FORBIDDEN
-            )
+        self.check_object_permissions(request, post)
         post.delete()
         return Response(
             status=status.HTTP_204_NO_CONTENT
