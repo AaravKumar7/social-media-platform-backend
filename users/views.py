@@ -6,6 +6,7 @@ from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
 from django.contrib.auth import get_user_model
 from posts.serializers import PostSerializer
 from posts.models import Post
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class RegisterView(APIView):
     
@@ -100,4 +101,19 @@ class SearchUserView(APIView):
         serializer=ProfileSerializer(users,many=True)
         return Response(
             serializer.data
+        )
+
+class UpdateProfilePictureView(APIView):
+    permission_classes=[IsAuthenticated]
+    parser_classes=[MultiPartParser,FormParser]
+    
+    def put(self,request):
+        user=request.user
+        serializer=ProfileSerializer(user,data=request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
         )

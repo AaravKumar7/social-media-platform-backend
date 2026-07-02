@@ -5,9 +5,11 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import PostSerializer
 from .models import Post
 from .pagination import PostPagination
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class CreatePostView(APIView):
     permission_classes=[IsAuthenticated]
+    parser_classes=[MultiPartParser, FormParser]
     
     def post(self,request):
         serializer=PostSerializer(data=request.data)
@@ -26,7 +28,7 @@ class ListPostView(APIView):
     permission_classes=[IsAuthenticated]
     
     def get(self,request):
-        posts=Post.objects.all().order_by('-created_at')
+        posts=Post.objects.select_related('user').prefetch_related('likes').order_by('-created_at')
         paginator=PostPagination()
         page=paginator.paginate_queryset(posts,request)
         serializer=PostSerializer(page,many=True)
@@ -130,12 +132,9 @@ class FeedView(APIView):
             'id',
             flat=True
         )
-        posts=Post.objects.filter(
-            user__id__in=following_ids
-        )
         following_ids=list(following_ids)
         following_ids.append(request.user.id)
-        posts=Post.objects.filter(
+        posts=Post.objects.select_related('user').prefetch_related('likes').filter(
             user__id__in=following_ids
         ).order_by('-created_at')
         serializer=PostSerializer(posts,many=True)
@@ -146,7 +145,7 @@ class SearchPostView(APIView):
     
     def get(self,request):
         query=request.query_params.get('q','')
-        posts=Post.objects.filter(
+        posts=Post.objects.select_related('user').prefetch_related('likes').filter(
             content__icontains=query
         )
         serializer=PostSerializer(posts,many=True)

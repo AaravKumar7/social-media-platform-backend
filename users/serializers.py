@@ -49,7 +49,6 @@ class LoginSerializer(serializers.Serializer):
         }
         
 class ProfileSerializer(serializers.ModelSerializer):
-    
     followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
 
@@ -58,6 +57,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = [
             'email',
             'username',
+            'profile_picture',
             'followers_count',
             'following_count'
         ]

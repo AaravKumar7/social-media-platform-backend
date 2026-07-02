@@ -26,6 +26,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     email=models.EmailField(unique=True)
     username=models.CharField(max_length=30, unique=True)
     name=models.CharField(max_length=50, blank=True)
+    profile_picture=models.ImageField(
+        upload_to='profile_pictures/',
+        blank=True,
+        null=True
+    )
     is_staff=models.BooleanField(default=False)
     is_active=models.BooleanField(default=True)
     date_joined=models.DateTimeField(auto_now_add=True)

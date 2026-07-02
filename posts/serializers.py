@@ -12,6 +12,7 @@ class PostSerializer(serializers.ModelSerializer):
             'id',
             'user',
             'content',
+            'image',
             'likes_count',
             'created_at',
             'updated_at'

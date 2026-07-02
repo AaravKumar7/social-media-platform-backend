@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView, LoginView, ProfileView, ToggleFollowView, SearchUserView
+from .views import RegisterView, LoginView, ProfileView, ToggleFollowView, SearchUserView, UpdateProfilePictureView
 
 urlpatterns = [
     path(
@@ -27,4 +27,8 @@ urlpatterns = [
         SearchUserView.as_view(), 
         name='search-user'
         ),
+    path(
+        'profile/picture/',UpdateProfilePictureView.as_view(),
+        name='update-profile-picture'
+    ),
 ]
